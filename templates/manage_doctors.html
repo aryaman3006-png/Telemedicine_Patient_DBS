@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Doctors{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <h5 class="card-header">Add New Doctor</h5>
+            <div class="card-body">
+                <form action="{{ url_for('add_doctor') }}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Doctor ID</label>
+                        <input type="number" class="form-control" name="doctor_id" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control" name="fname" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-control" name="lname" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Specialization</label>
+                        <input type="text" class="form-control" name="specialization">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-control" name="phone">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" name="department_id" required>
+                            <option value="" selected disabled>Select department...</option>
+                            {% for d in departments %}
+                                <option value="{{ d.Department_ID }}">{{ d.Name_ }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Head/Manager (Optional)</label>
+                        <select class="form-select" name="head_id">
+                            <option value="" selected>None</option>
+                            {% for d in all_doctors %}
+                                <option value="{{ d.Doctor_ID }}">Dr. {{ d.Fname }} {{ d.Lname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add Doctor</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <h5 class="card-header">All Doctors</h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Specialization</th>
+                                <th>Department</th>
+                                <th>Head</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in doctors %}
+                            <tr>
+                                <td>{{ d.Doctor_ID }}</td>
+                                <td>Dr. {{ d.Fname }} {{ d.Lname }}</td>
+                                <td>{{ d.Specialization }}</td>
+                                <td>{{ d.department.Name_ if d.department else 'N/A' }}</td>
+                                <td>{% if d.head %}Dr. {{ d.head.Fname }} {{ d.head.Lname }}{% else %}N/A{% endif %}</td>
+                                <td>
+                                    <form action="{{ url_for('delete_doctor', doctor_id=d.Doctor_ID) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this doctor?');">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">No doctors found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Diseases{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <h5 class="card-header">Add New Disease</h5>
+            <div class="card-body">
+                <form action="{{ url_for('add_disease') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="disease_id" class="form-label">Disease ID</label>
+                        <input type="number" class="form-control" name="disease_id" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <input type="text" class="form-control" name="category">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add Disease</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <h5 class="card-header">All Diseases</h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in diseases %}
+                            <tr>
+                                <td>{{ d.Disease_ID }}</td>
+                                <td>{{ d.Name_ }}</td>
+                                <td>{{ d.Category or 'N/A' }}</td>
+                                <td>
+                                    <form action="{{ url_for('delete_disease', disease_id=d.Disease_ID) }}" method="POST" onsubmit="return confirm('Are you sure? This will delete the disease if not assigned to patients.');">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">No diseases found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

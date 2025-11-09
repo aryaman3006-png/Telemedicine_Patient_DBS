@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Detailed Appointments Report{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Flashed Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mb-4">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category == 'danger' and 'danger' or 'success' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <h2>🤝 Detailed Appointments Report (SQL JOIN)</h2>
+    <p>A full list of all appointments, combining data from Appointment, Patient, and Doctor tables.</p>
+
+    <div class="table-responsive">
+        {% if detailed_data %}
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date & Time</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in detailed_data %}
+                <tr>
+                    <td>{{ appt.Appointment_ID }}</td>
+                    <!-- FIX: Date_Time is now a pre-formatted string from Python, so we display it directly -->
+                    <td>{{ appt.Date_Time }}</td> 
+                    <td>{{ appt.Patient_Fname }} {{ appt.Patient_Lname }}</td>
+                    <td>Dr. {{ appt.Doctor_Fname }} {{ appt.Doctor_Lname }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-warning text-center" role="alert">
+            <h4 class="alert-heading">No Appointments Found!</h4>
+            <p>The report is currently empty. Please ensure the Appointment, Patient, and Doctor tables have linked data for the report to display any rows.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

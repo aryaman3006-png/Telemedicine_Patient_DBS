@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Departments{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <h5 class="card-header">Add New Department</h5>
+            <div class="card-body">
+                <form action="{{ url_for('add_department') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="department_id" class="form-label">Department ID</label>
+                        <input type="number" class="form-control" name="department_id" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" name="location">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add Department</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <h5 class="card-header">All Departments</h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in departments %}
+                            <tr>
+                                <td>{{ d.Department_ID }}</td>
+                                <td>{{ d.Name_ }}</td>
+                                <td>{{ d.Location or 'N/A' }}</td>
+                                <td>
+                                    <form action="{{ url_for('delete_department', department_id=d.Department_ID) }}" method="POST" onsubmit="return confirm('Are you sure? This will delete the department if no doctors are assigned to it.');">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">No departments found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Patient: {{ patient.Fname }} {{ patient.Lname }}{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Patient Details: {{ patient.Fname }} {{ patient.Lname }} (ID: {{ patient.Patient_ID }})</h2>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <h5 class="card-header">Patient Information</h5>
+            <div class="card-body">
+                <p><strong>Name:</strong> {{ patient.Fname }} {{ patient.Lname }}</p>
+                <p><strong>Date of Birth:</strong> {{ patient.DOB.strftime('%Y-%m-%d') if patient.DOB else 'N/A' }}</p>
+                <p><strong>Address:</strong> {{ patient.Street or 'N/A' }}, {{ patient.City or 'N/A' }}, {{ patient.State or 'N/A' }} {{ patient.Zip or 'N/A' }}</p>
+                <p><strong>Emergency Contact:</strong> {{ patient.Emergency_Contact or 'N/A' }}</p>
+                <p><strong>Primary Disease:</strong> {{ patient.primary_disease.Name_ if patient.primary_disease else 'N/A' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <h5 class="card-header">Phone Numbers</h5>
+            <div class="card-body">
+                <ul class="list-group mb-3">
+                    {% for phone in patient.phones %}
+                        <li class="list-group-item">{{ phone.Phone_no }}</li>
+                    {% else %}
+                        <li class="list-group-item">No phone numbers on file.</li>
+                    {% endfor %}
+                </ul>
+                <form action="{{ url_for('add_phone', patient_id=patient.Patient_ID) }}" method="POST">
+                    <div class="input-group">
+                        <input type="tel" class="form-control" name="phone_no" placeholder="Add new phone..." required>
+                        <button type="submit" class="btn btn-outline-secondary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <h5 class="card-header">Diagnoses (Comorbidities)</h5>
+            <div class="card-body">
+                <ul class="list-group mb-3">
+                    {% for diagnosis in patient.diagnoses %}
+                        <li class="list-group-item">
+                            <strong>{{ diagnosis.disease.Name_ }}</strong> ({{ diagnosis.disease.Category }})
+                            <br><small>Notes: {{ diagnosis.Description_ }}</small>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item">No secondary diagnoses on file.</li>
+                    {% endfor %}
+                </ul>
+                <form action="{{ url_for('add_diagnosis', patient_id=patient.Patient_ID) }}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Add New Diagnosis</label>
+                        <select class="form-select" name="disease_id" required>
+                            <option value="" selected disabled>Select disease...</option>
+                            {% for d in diseases %}
+                                <option value="{{ d.Disease_ID }}">{{ d.Name_ }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="description" placeholder="Description (e.g., 'Mild', 'Chronic')">
+                    </div>
+                    <button type="submit" class="btn btn-outline-secondary w-100">Add Diagnosis</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <h5 class="card-header">Prescriptions</h5>
+            <div class="card-body">
+                <div class="table-responsive mb-3" style="max-height: 200px; overflow-y: auto;">
+                    <table class="table table-sm">
+                        {% for rx in patient.prescriptions %}
+                            <tr>
+                                <td><strong>ID: {{ rx.PrescriptionID }}</strong></td>
+                                <td>{{ rx.Date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ rx.Instruction }}</td>
+                            </tr>
+                        {% else %}
+                            <tr><td>No prescriptions found.</td></tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <form action="{{ url_for('add_prescription', patient_id=patient.Patient_ID) }}" method="POST">
+                    <h6 class_="h6">Add New Prescription</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date" value="{{ 'now' | strftime('%Y-%m-%d') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Instructions</label>
+                        <textarea class="form-control" name="instruction" rows="2" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-outline-secondary w-100">Add Prescription</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <h5 class="card-header">Consultant Logs</h5>
+            <div class="card-body">
+                <div class="table-responsive mb-3" style="max-height: 200px; overflow-y: auto;">
+                    <table class="table table-sm">
+                        {% for log in patient.logs %}
+                            <tr>
+                                <td><strong>{{ log.Type_ }}</strong></td>
+                                <td>{{ log.department.Name_ }}</td>
+                                <td>{{ log.Date_Time.strftime('%Y-%m-%d %I:%M %p') }}</td>
+                                <td>{{ log.Notes }}</td>
+                            </tr>
+                        {% else %}
+                            <tr><td>No logs found.</td></tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <form action="{{ url_for('add_log', patient_id=patient.Patient_ID) }}" method="POST">
+                    <h6 class="h6">Add New Log Entry</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Log Type</label>
+                        <input type="text" class="form-control" name="type" placeholder="e.g., 'Check-in', 'Referral'" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" name="department_id" required>
+                            {% for d in departments %}
+                                <option value="{{ d.Department_ID }}">{{ d.Name_ }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-outline-secondary w-100">Add Log</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

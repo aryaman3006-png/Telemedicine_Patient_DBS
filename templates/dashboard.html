@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <h5 class="card-header">Schedule New Appointment</h5>
+            <div class="card-body">
+                <form action="{{ url_for('schedule_appointment') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="patient_id" class="form-label">Patient</label>
+                        <select class="form-select" id="patient_id" name="patient_id" required>
+                            <option value="" selected disabled>Select a patient...</option>
+                            {% for p in patients %}
+                                <option value="{{ p.Patient_ID }}">{{ p.Patient_ID }} - {{ p.Fname }} {{ p.Lname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="doctor_id" class="form-label">Doctor</label>
+                        <select class="form-select" id="doctor_id" name="doctor_id" required>
+                            <option value="" selected disabled>Select a doctor...</option>
+                            {% for d in doctors %}
+                                <option value="{{ d.Doctor_ID }}">{{ d.Doctor_ID }} - Dr. {{ d.Fname }} {{ d.Lname }} ({{ d.Specialization }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date_time" class="form-label">Date and Time</label>
+                        <input type="datetime-local" class="form-control" id="date_time" name="date_time" required>
+                    </div>
+                   
+                    <button type="submit" class="btn btn-primary w-100">Schedule</button>
+                </form>
+            </div>
+        </div>
+    </div>
+   
+
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <h5 class="card-header">Recent & Upcoming Appointments</h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date & Time</th>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                       <tbody>
+    {% for appt in appointments %}
+    <tr>
+        <td>{{ appt.Appointment_ID }}</td>
+        <td>{{ appt.Date_Time.strftime('%Y-%m-%d %I:%M %p') if appt.Date_Time else 'N/A' }}</td>
+        
+        <td>
+            {% if appt.patient %}
+                {{ appt.patient.Fname }} {{ appt.patient.Lname }}
+            {% else %}
+                **[Patient Missing]**
+            {% endif %}
+        </td>
+        
+        <td>
+            {% if appt.doctor %}
+                Dr. {{ appt.doctor.Fname }} {{ appt.doctor.Lname }}
+            {% else %}
+                **[Doctor Missing]**
+            {% endif %}
+        </td>
+        
+        <td>
+            <form action="{{ url_for('update_appointment_status', appointment_id=appt.Appointment_ID) }}" method="POST" class="d-flex">
+                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="Scheduled" {% if appt.current_Status == 'Scheduled' %}selected{% endif %}>Scheduled</option>
+                    <option value="Completed" {% if appt.current_Status == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option value="Canceled" {% if appt.current_Status == 'Canceled' %}selected{% endif %}>Canceled</option>
+                    <option value="Prescribed" {% if appt.current_Status == 'Prescribed' %}selected{% endif %}>Prescribed</option>
+                </select>
+            </form>
+        </td>
+        <td>
+            <form action="{{ url_for('delete_appointment', appointment_id=appt.Appointment_ID) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this appointment?');">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="6" class="text-center">No appointments found.</td>
+    </tr>
+    {% endfor %}
+</tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

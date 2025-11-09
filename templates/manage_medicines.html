@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Medicines{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <h5 class="card-header">Add New Medicine</h5>
+            <div class="card-body">
+                <form action="{{ url_for('add_medicine') }}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Medicine ID</label>
+                        <input type="number" class="form-control" name="medicine_id" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Medicine Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Dosage</label>
+                        <input type="text" class="form-control" name="dosage" placeholder="e.g., 500mg">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" name="expiry_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Manufacturer</label>
+                        <input type="text" class="form-control" name="manufacturer">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add Medicine</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <h5 class="card-header">All Medicines</h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Dosage</th>
+                                <th>Expires</th>
+                                <th>Manufacturer</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in medicines %}
+                            <tr>
+                                <td>{{ m.Medicine_ID }}</td>
+                                <td>{{ m.Name_ }}</td>
+                                <td>{{ m.Dosage }}</td>
+                                <td>{{ m.Expiry_Date.strftime('%Y-%m-%d') if m.Expiry_Date else 'N/A' }}</td>
+                                <td>{{ m.Manufacturer }}</td>
+                                <td>
+                                    <form action="{{ url_for('delete_medicine', medicine_id=m.Medicine_ID) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">No medicines found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

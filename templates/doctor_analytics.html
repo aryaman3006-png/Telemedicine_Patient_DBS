@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Workload Analytics{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📊 Doctor Workload Report</h2>
+    <p>Total number of appointments scheduled per doctor (Data provided by SQL Aggregate VIEW).</p>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Doctor ID</th>
+                    <th>Name</th>
+                    <th>Specialization</th>
+                    <th>Total Appointments</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doctor in workload_data %}
+                <tr>
+                    <td>{{ doctor.Doctor_ID }}</td>
+                    <td>Dr. {{ doctor.Fname }} {{ doctor.Lname }}</td>
+                    <td>{{ doctor.Specialization }}</td>
+                    <td><strong>{{ doctor.Total_Appointments }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
