@@ -159,26 +159,21 @@ INSERT INTO Disease (Disease_ID, Name_) VALUES
 (2, 'Hypertension'),
 (3, 'Asthma');
 
--- OR, if your name column is Disease_Name:
--- INSERT INTO Disease (Disease_ID, Disease_Name) VALUES 
--- (1, 'Type 2 Diabetes'),
--- (2, 'Hypertension'),
--- (3, 'Asthma');
+COMMIT; 
 
-COMMIT; -- Always commit your changes!
 SELECT COUNT(*) FROM Disease;
 SELECT COUNT(*) FROM Department;
 SELECT COUNT(*) FROM Patient;
+
 INSERT INTO Department (Department_ID, Name_) VALUES 
 (101, 'Cardiology'), 
 (102, 'Pediatrics'), 
-
 (103, 'General Practice');
+COMMIT;
 
-
-COMMIT; -- IMPORTANT: Make sure you commit the transaction!
 SELECT * FROM Patient ORDER BY Patient_ID DESC LIMIT 3;
 SELECT * FROM appointment;
+
 -- 1. VIEW: View_Doctor_Appointment_Counts (AGGREGATE)
 -- Calculates the total number of appointments per doctor.
 CREATE VIEW View_Doctor_Appointment_Counts AS
@@ -238,7 +233,7 @@ DELIMITER ;
 
 -- Reset Delimiter
 DELIMITER ;
--- Use IGNORE to avoid errors if the records already exist
+
 -- 1. Ensure Department exists
 INSERT IGNORE INTO Department (Department_ID, Name_, Location) VALUES 
 (101, 'Cardiology', 'Main Building');
@@ -256,26 +251,22 @@ INSERT IGNORE INTO Patient (Patient_ID, Fname, Lname, DOB, Emergency_Contact, St
 (1, 'John', 'Doe', '1980-01-15', '5559876543', '123 Main St', 'Anytown', 'CA', '12345', 1);
 
 -- 5. Create an Appointment linking them (This is the row the report needs)
--- Note: AUTO_INCREMENT will handle Appointment_ID if you drop the column from the INSERT list.
--- If you strictly need to insert Appointment_ID, check the last inserted ID.
 INSERT INTO Appointment (Date_Time, current_Status, Patient_ID, Doctor_ID) VALUES
 (NOW(), 'Completed', 1, 501);
 
 COMMIT;
+
 SELECT COUNT(*) FROM Appointment A
 JOIN Patient P ON A.Patient_ID = P.Patient_ID
 JOIN Doctor D ON A.Doctor_ID = D.Doctor_ID;
--- 1. Ensure the Disease 'Hypertension' exists (Disease_ID = 2)
--- Using INSERT IGNORE to prevent an error if ID 2 is already taken or inserted.
 
+-- 1. Ensure the Disease 'Hypertension' exists (Disease_ID = 2)
 INSERT IGNORE INTO Disease (Disease_ID, Category, Name_) VALUES 
 (2, 'Cardiovascular', 'Hypertension');
 
 ---
 
 -- 2. Insert the New Patient (Jane Doe)
--- Note: We link the patient to Disease_ID = 2 (Hypertension) directly in the Patient table.
-
 INSERT INTO Patient (
     Patient_ID, 
     Fname, 
@@ -313,10 +304,10 @@ FROM Patient P
 JOIN Disease D ON P.Disease_ID = D.Disease_ID
 WHERE P.Patient_ID = 4;
 
--- Always commit your changes if you are using transactions
 COMMIT;
+
 INSERT INTO Patient (
-    Patient_ID,        -- Assuming you still require manual ID entry
+    Patient_ID,       
     Fname,
     Lname,
     DOB,
@@ -328,7 +319,7 @@ INSERT INTO Patient (
     Disease_ID
 )
 VALUES (
-    4,                 -- Example Patient ID
+    4,                 
     'Jane',
     'Doe',
     '1995-03-20',
@@ -341,7 +332,6 @@ VALUES (
 );
 
 COMMIT;
--- Assuming Disease_ID 2 is 'Hypertension'
 
 INSERT INTO Disease (Disease_ID, Category, Name_) VALUES
 (1, 'Endocrine', 'Type 2 Diabetes'),
