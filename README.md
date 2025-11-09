@@ -1,1 +1,7 @@
 # Telemedicine_Patient_DBS
+
+The Telemedicine Patient Data Management System is a Flask-based web application backed by a MySQL database, designed to simplify and secure healthcare data management in virtual medical environments. As telemedicine becomes an integral part of modern healthcare, there is a growing need for systems that can handle sensitive medical data with integrity, privacy, and reliability.
+
+This project provides a centralized platform to store and manage patient records, consultation logs, prescriptions, and appointments, ensuring that doctors and healthcare providers can access accurate and up-to-date information anytime, anywhere. The backend database is fully normalized and reinforced with foreign key constraints, stored procedures, and triggers to maintain data consistency and automate workflows such as appointment scheduling and status updates.
+
+Through its Flask frontend, the system offers a clean and intuitive interface for users to securely interact with the database—allowing role-based access, patient management, and prescription tracking. By combining structured database design with a functional web layer, the system addresses key challenges in telemedicine such as data security, distributed access, and real-time coordination, laying the groundwork for scalable, reliable digital healthcare delivery.
